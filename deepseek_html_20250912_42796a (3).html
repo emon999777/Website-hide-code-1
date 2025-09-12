@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রিমিয়াম কনটেন্ট এক্সেস</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
+        }
+        
+        h1 {
+            color: #ff6d00;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(45deg, #00c853, #ff6d00);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #00c853, #009624);
+            border: none;
+            border-radius: 15px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            margin: 15px auto;
+            display: block;
+            box-shadow: 0 8px 0 #009624, 0 15px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(4px);
+        }
+        
+        .btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 #009624;
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .code-display {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, #ff6d00, #4285f4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed #ff6d00;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .ad-counter {
+            font-size: 18px;
+            margin: 15px 0;
+            color: #ff6d00;
+            text-align: center;
+        }
+        
+        .instructions {
+            background: rgba(255, 109, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #ff6d00;
+            text-align: left;
+        }
+        
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #ff6d00;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .warning {
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid #ff0000;
+            color: #ff6666;
+        }
+        
+        .success {
+            background: rgba(0, 200, 83, 0.1);
+            border-left: 4px solid #00c853;
+            color: #66ff99;
+        }
+        
+        .ad-timer {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #4285f4;
+            text-align: center;
+        }
+        
+        .telegram-fallback {
+            display: none;
+            background: rgba(255, 109, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #ff6d00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Step 1: Initial View -->
+        <div class="step active" id="step1">
+            <h1>প্রিমিয়াম কনটেন্ট এক্সেস</h1>
+            
+            <div class="instructions">
+                <p>৩টি বিজ্ঞাপন দেখুন এবং আপনার এক্সেস কোড সংগ্রহ করুন</p>
+                <p>✅ প্রতিটি এড ১০ সেকেন্ড দেখতে হবে</p>
+                <p>✅ এড সম্পূর্ণ হলে পরবর্তী ধাপে যাবেন</p>
+                <p>✅ সবগুলি এড দেখার পর কোড পাবেন</p>
+            </div>
+            
+            <button class="btn" id="startBtn">এড দেখানো শুরু করুন</button>
+        </div>
+
+        <!-- Step 2: Ad Viewing Progress -->
+        <div class="step" id="step2">
+            <h1>অ্যাড দেখানো হচ্ছে</h1>
+            
+            <div class="ad-counter" id="adCounter">অ্যাড দেখানো হচ্ছে: ১/৩</div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="ad-timer" id="adTimer">১০ সেকেন্ড বাকি</div>
+            
+            <div class="loader" id="loader"></div>
+            
+            <p class="ad-instruction" id="adInstruction">এডটি দেখার জন্য নিচের বাটনে ক্লিক করুন</p>
+            
+            <button class="btn" id="adBtn">এড দেখুন</button>
+            
+            <div class="telegram-fallback" id="telegramFallback">
+                <p>টেলিগ্রাম থেকে এক্সেস করলে নিচের লিংকে ক্লিক করে এড দেখুন:</p>
+                <a href="#" id="telegramAdLink" target="_blank">এড দেখুন</a>
+                <p>এড দেখার পর ফিরে এসে "আমি এড দেখেছি" বাটনে ক্লিক করুন</p>
+                <button class="btn" id="confirmAdBtn">আমি এড দেখেছি</button>
+            </div>
+            
+            <div id="messageContainer"></div>
+        </div>
+
+        <!-- Step 3: Code Display -->
+        <div class="step" id="step3">
+            <h1>আপনার এক্সেস কোড</h1>
+            
+            <div class="instructions">
+                <p>এই কোডটি কপি করে সংরক্ষণ করুন</p>
+            </div>
+            
+            <div class="code-display" id="dailyCode">153AJ4</div>
+            
+            <button class="btn" id="copyBtn">কোড কপি করুন</button>
+            
+            <div class="instructions">
+                <p>📋 এই কোডটি প্রিমিয়াম কনটেন্ট অ্যাক্সেস করার জন্য প্রয়োজন</p>
+                <p>⭐ আজকের তারিখ: <span id="currentDate"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('bn-BD');
+        
+        // Ad URLs
+        const adUrls = [
+            "https://otieu.com/4/9725607",
+            "https://otieu.com/4/9429975",
+            "https://otieu.com/4/9717825"
+        ];
+        
+        // Daily code - এখানে কোড পরিবর্তন করুন
+        // প্রতিদিন এই ভেরিয়েবলের মান পরিবর্তন করে নতুন কোড সেট করুন
+        const dailyCode = "153AJ4";
+        document.getElementById('dailyCode').textContent = dailyCode;
+        
+        // Detect if user is using Telegram
+        function isTelegramBrowser() {
+            return navigator.userAgent.includes('Telegram') || 
+                   navigator.userAgent.includes('WebApp') ||
+                   window.TelegramWebviewProxy !== undefined;
+        }
+        
+        // Step management
+        function showStep(stepId) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(stepId).classList.add('active');
+        }
+        
+        // Ad viewing process
+        let adCount = 0;
+        const totalAds = 3;
+        let adTimerInterval;
+        let secondsRemaining = 10;
+        let adWindow;
+        let checkVisibilityInterval;
+        let minimumViewTimeCompleted = false;
+        let isTelegram = isTelegramBrowser();
+        
+        document.getElementById('startBtn').addEventListener('click', function() {
+            showStep('step2');
+            updateAdProgress();
+            
+            // Show Telegram fallback if needed
+            if (isTelegram) {
+                document.getElementById('telegramFallback').style.display = 'block';
+                document.getElementById('adBtn').style.display = 'none';
+                document.getElementById('adInstruction').textContent = 'টেলিগ্রাম থেকে এক্সেস করছেন, নিচের বিশেষ লিংক ব্যবহার করুন';
+                
+                // Set the ad link for current ad
+                document.getElementById('telegramAdLink').href = adUrls[adCount];
+                document.getElementById('telegramAdLink').textContent = `এড ${adCount + 1} দেখুন`;
+            }
+        });
+        
+        document.getElementById('adBtn').addEventListener('click', function() {
+            openAd();
+        });
+        
+        document.getElementById('confirmAdBtn').addEventListener('click', function() {
+            if (isTelegram) {
+                // For Telegram, manually complete the ad after user confirmation
+                adCompleted();
+            }
+        });
+        
+        function updateAdProgress() {
+            document.getElementById('adCounter').textContent = `অ্যাড দেখানো হচ্ছে: ${adCount + 1}/${totalAds}`;
+            document.getElementById('progressBar').style.width = `${((adCount) / totalAds) * 100}%`;
+            
+            // Reset timer and state
+            secondsRemaining = 10;
+            minimumViewTimeCompleted = false;
+            document.getElementById('adTimer').textContent = `${secondsRemaining} সেকেন্ড বাকি`;
+            
+            // Clear any previous messages
+            document.getElementById('messageContainer').innerHTML = '';
+            
+            // Update Telegram fallback link if needed
+            if (isTelegram) {
+                document.getElementById('telegramAdLink').href = adUrls[adCount];
+                document.getElementById('telegramAdLink').textContent = `এড ${adCount + 1} দেখুন`;
+            }
+        }
+        
+        function openAd() {
+            // For Telegram, use the fallback method
+            if (isTelegram) {
+                document.getElementById('telegramFallback').style.display = 'block';
+                document.getElementById('adBtn').style.display = 'none';
+                return;
+            }
+            
+            // Open the ad in a new window
+            adWindow = window.open(adUrls[adCount], '_blank');
+            
+            if (!adWindow) {
+                showMessage('পপআপ ব্লক করা হয়েছে। দয়া করে পপআপ অনুমতি দিন।', 'warning');
+                return;
+            }
+            
+            // Disable the button
+            document.getElementById('adBtn').disabled = true;
+            document.getElementById('adBtn').textContent = 'এড দেখানো হচ্ছে...';
+            
+            // Reset timer
+            secondsRemaining = 10;
+            minimumViewTimeCompleted = false;
+            document.getElementById('adTimer').textContent = `${secondsRemaining} সেকেন্ড বাকি`;
+            
+            // Start the countdown timer
+            adTimerInterval = setInterval(() => {
+                secondsRemaining--;
+                document.getElementById('adTimer').textContent = `${secondsRemaining} সেকেন্ড বাকি`;
+                
+                if (secondsRemaining <= 0) {
+                    // Minimum viewing time completed
+                    clearInterval(adTimerInterval);
+                    minimumViewTimeCompleted = true;
+                    document.getElementById('adTimer').textContent = 'সর্বনিম্ন সময় পূর্ণ হয়েছে! আপনি এখন ফিরে যেতে পারেন';
+                    
+                    // If user has already returned, complete the ad
+                    if (document.hasFocus()) {
+                        adCompleted();
+                    }
+                }
+            }, 1000);
+            
+            // Start checking if user returned
+            checkVisibilityInterval = setInterval(() => {
+                if (document.hasFocus()) {
+                    // User returned to the page
+                    clearInterval(checkVisibilityInterval);
+                    
+                    if (minimumViewTimeCompleted) {
+                        // User returned after minimum time
+                        adCompleted();
+                    } else {
+                        // User returned too early
+                        clearInterval(adTimerInterval);
+                        showMessage('আপনি খুব তাড়াতাড়ি ফিরে এসেছেন! দয়া করে সম্পূর্ণ ১০ সেকেন্ড এড দেখুন।', 'warning');
+                        document.getElementById('adBtn').disabled = false;
+                        document.getElementById('adBtn').textContent = 'আবার চেষ্টা করুন';
+                        document.getElementById('adTimer').textContent = '১০ সেকেন্ড বাকি';
+                    }
+                }
+            }, 500);
+        }
+        
+        function adCompleted() {
+            showMessage(`ধাপ ${adCount + 1} সম্পূর্ণ হয়েছে!`, 'success');
+            
+            // Move to next ad or show code
+            adCount++;
+            
+            if (adCount < totalAds) {
+                // Show next ad after a delay
+                setTimeout(() => {
+                    updateAdProgress();
+                    document.getElementById('adBtn').disabled = false;
+                    document.getElementById('adBtn').textContent = 'পরবর্তী এড দেখুন';
+                    document.getElementById('adBtn').style.display = 'block';
+                    
+                    // Hide Telegram fallback if shown
+                    if (isTelegram) {
+                        document.getElementById('telegramFallback').style.display = 'none';
+                    }
+                }, 2000);
+            } else {
+                // All ads completed, show code
+                setTimeout(() => {
+                    showStep('step3');
+                }, 2000);
+            }
+        }
+        
+        function showMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            
+            document.getElementById('messageContainer').appendChild(messageDiv);
+        }
+        
+        // Copy code functionality
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const code = document.getElementById('dailyCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showMessage('কোড কপি হয়েছে: ' + code, 'success');
+            }).catch(err => {
+                console.error('কোড কপি করতে সমস্যা হয়েছে:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showMessage('কোড কপি হয়েছে: ' + code, 'success');
+            });
+        });
+    </script>
+</body>
+</html>
